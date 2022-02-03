@@ -1,0 +1,17 @@
+oauthClient:
+  redirectUris:
+    - http://localhost:3000/authorization-code/callback
+  applicationType: web
+trustedOrigins:
+  - http://localhost:3000/
+
+directions: |+2
+  Okta configuration written to: .okta.env
+  
+  Install the dependencies using npm:
+
+      npm install
+
+  Run this application with:
+
+      npm start
