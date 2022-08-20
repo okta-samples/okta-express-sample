@@ -100,7 +100,8 @@ app.use('/', indexRouter);
 app.use('/login', passport.authenticate('oidc'));
 
 app.use('/authorization-code/callback',
-  passport.authenticate('oidc', { failureRedirect: '/error' }),
+  // https://github.com/jaredhanson/passport/issues/458
+  passport.authenticate('oidc', { failureMessage: true, failWithError: true }),
   (req, res) => {
     res.redirect('/profile');
   }
@@ -124,7 +125,8 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
+  res.locals.message = err.message + (err.code && ' ('+err.code+')' || '') + 
+    (req.session.messages && ": " + req.session.messages.join("\n. ") || '');
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
