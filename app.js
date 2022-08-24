@@ -37,12 +37,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
+let logout_url, id_token;
 let _base = ORG_URL.slice(-1) == '/' ? ORG_URL.slice(0, -1) : ORG_URL;
 axios
   .get(`${_base}/.well-known/openid-configuration`)
   .then(res => {
     if (res.status == 200) {
       let { issuer, authorization_endpoint, token_endpoint, userinfo_endpoint, end_session_endpoint } = res.data;
+      logout_url = end_session_endpoint;
 
       // Set up passport
       passport.use('oidc', new Strategy({
@@ -59,6 +61,7 @@ axios
           issuer, profile, context, idToken,
           accessToken, refreshToken, params
         }, null, 2)}\n*****`);
+        id_token = idToken;
         return done(null, profile);
       }));
     }
@@ -106,10 +109,10 @@ app.post('/logout', (req, res) => {
   req.logout();
   req.session.destroy();
   let params = {
-    id_token_hint: 'idToken',
+    id_token_hint: id_token,
     post_logout_redirect_uri: 'http://localhost:3000/'
   }
-  res.redirect(ORG_URL + '/oauth2/v1/logout?' + qs.stringify(params));
+  res.redirect(logout_url + '?' + qs.stringify(params));
 });
 
 // catch 404 and forward to error handler
