@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var passport = require('passport');
+var qs = require('querystring');
 var { Strategy } = require('passport-openidconnect');
 const axios = require('axios');
 
@@ -41,7 +42,7 @@ axios
   .get(`${_base}/.well-known/openid-configuration`)
   .then(res => {
     if (res.status == 200) {
-      let { issuer, authorization_endpoint, token_endpoint, userinfo_endpoint } = res.data;
+      let { issuer, authorization_endpoint, token_endpoint, userinfo_endpoint, end_session_endpoint } = res.data;
 
       // Set up passport
       passport.use('oidc', new Strategy({
@@ -104,7 +105,11 @@ app.use('/profile', ensureLoggedIn, (req, res) => {
 app.post('/logout', (req, res) => {
   req.logout();
   req.session.destroy();
-  res.redirect('/');
+  let params = {
+    id_token_hint: 'idToken',
+    post_logout_redirect_uri: 'http://localhost:3000/'
+  }
+  res.redirect(ORG_URL + '/oauth2/v1/logout?' + qs.stringify(params));
 });
 
 // catch 404 and forward to error handler
