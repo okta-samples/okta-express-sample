@@ -36,44 +36,34 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
-let _base = ORG_URL.slice(-1) == '/'? ORG_URL.slice(0,-1) : ORG_URL;
-let issuer, authorizationURL, tokenURL, userInfoURL;
+let _base = ORG_URL.slice(-1) == '/' ? ORG_URL.slice(0, -1) : ORG_URL;
 axios
   .get(`${_base}/.well-known/openid-configuration`)
   .then(res => {
     if (res.status == 200) {
-      issuer = res.data.issuer;
-      authorizationURL = res.data.authorization_endpoint;
-      tokenURL = res.data.token_endpoint;
-      userInfoURL = res.data.userinfo_endpoint;
+      let { issuer, authorization_endpoint, token_endpoint, userinfo_endpoint } = res.data;
+
+      // Set up passport
+      passport.use('oidc', new Strategy({
+        issuer,
+        authorizationURL: authorization_endpoint,
+        tokenURL: token_endpoint,
+        userInfoURL: userinfo_endpoint,
+        clientID: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        callbackURL: 'http://localhost:3000/authorization-code/callback',
+        scope: 'groups profile offline_access',
+      }, (issuer, profile, context, idToken, accessToken, refreshToken, params, done) => {
+        console.log(`OIDC response: ${JSON.stringify({
+          issuer, profile, context, idToken,
+          accessToken, refreshToken, params
+        }, null, 2)}\n*****`);
+        return done(null, profile);
+      }));
     }
-    else { /** we should never reach here, but you nver know ... */
-      issuer = `${ORG_URL}oauth2/default`;
-      authorizationURL = `${ORG_URL}oauth2/default/v1/authorize`;
-      tokenURL = `${ORG_URL}oauth2/default/v1/token`;
-      userInfoURL = `${ORG_URL}/oauth2/default/v1/userinfo`;
+    else {
+      console.log(`Unable to reach the well-known endpoint. Are you sure that the ORG_URL you provided (${ORG_URL}) is correct?`);
     }
-  })
-  .then(res => {
-    // set up passport
-    passport.use('oidc', new Strategy({
-      issuer,
-      authorizationURL,
-      tokenURL,
-      userInfoURL,
-      clientID: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      callbackURL: '/authorization-code/callback',
-      scope: 'groups profile offline_access',
-    }, (issuer, uiProfile, idProfile, context, idToken, accessToken, refreshToken, params, done) => {
-      console.log(`OIDC response: ${JSON.stringify({issuer, uiProfile, idProfile, context, idToken,
-        accessToken, refreshToken, params}, null, 2)}\n*****`);
-      let profile = uiProfile._json;
-      delete uiProfile._json;
-      delete uiProfile._raw;
-      Object.assign(profile, uiProfile);
-      return done(null, profile);
-    }));
   })
   .catch(error => {
     console.error(error);
@@ -118,14 +108,14 @@ app.post('/logout', (req, res) => {
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message + (err.code && ' ('+err.code+')' || '') + 
+  res.locals.message = err.message + (err.code && ' (' + err.code + ')' || '') +
     (req.session.messages && ": " + req.session.messages.join("\n. ") || '');
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
