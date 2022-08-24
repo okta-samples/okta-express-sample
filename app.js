@@ -105,14 +105,15 @@ app.use('/profile', ensureLoggedIn, (req, res) => {
   res.render('profile', { authenticated: req.isAuthenticated(), user: req.user });
 });
 
-app.post('/logout', (req, res) => {
-  req.logout();
-  req.session.destroy();
-  let params = {
-    id_token_hint: id_token,
-    post_logout_redirect_uri: 'http://localhost:3000/'
-  }
-  res.redirect(logout_url + '?' + qs.stringify(params));
+app.post('/logout', (req, res, next) => {
+  req.logout(err => {
+    if (err) { return next(err); }
+    let params = {
+      id_token_hint: id_token,
+      post_logout_redirect_uri: 'http://localhost:3000/'
+    }
+    res.redirect(logout_url + '?' + qs.stringify(params));
+  });
 });
 
 // catch 404 and forward to error handler
