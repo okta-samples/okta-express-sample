@@ -55,7 +55,7 @@ axios
         clientID: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         callbackURL: 'http://localhost:3000/authorization-code/callback',
-        scope: 'groups profile offline_access',
+        scope: 'profile offline_access',
       }, (issuer, profile, context, idToken, accessToken, refreshToken, params, done) => {
         console.log(`OIDC response: ${JSON.stringify({
           issuer, profile, context, idToken,
