@@ -7,6 +7,8 @@ trustedOrigins:
 
 directions: |+2
   Okta configuration written to: .okta.env
+
+  Sign into Okta and update your Okta application to enable Refresh Token
   
   Install the dependencies using npm:
 
