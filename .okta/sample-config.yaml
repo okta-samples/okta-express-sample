@@ -1,9 +1,9 @@
 oauthClient:
   redirectUris:
-    - http://localhost:3000/authorization-code/callback
+  - https://potential-zebra-qwxg6946v29w5w-3000.app.github.dev/authorization-code/callback
   applicationType: web
 trustedOrigins:
-  - http://localhost:3000/
+  - https://potential-zebra-qwxg6946v29w5w-3000.app.github.dev 
 
 directions: |+2
   Okta configuration written to: .okta.env

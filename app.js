@@ -9,6 +9,10 @@ var qs = require('querystring');
 var { Strategy } = require('passport-openidconnect');
 const axios = require('axios');
 
+//UL requiremnts
+var {MemoryStore} = require('express-session')
+const store = new MemoryStore();
+
 // source and import environment variables
 require('dotenv').config({ path: '.okta.env' })
 const { ORG_URL, CLIENT_ID, CLIENT_SECRET } = process.env;
@@ -30,7 +34,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   secret: 'CanYouLookTheOtherWay',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  store
 }));
 
 app.use(passport.initialize());
@@ -54,7 +59,8 @@ axios
         userInfoURL: userinfo_endpoint,
         clientID: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/authorization-code/callback',
+        //callbackURL: 'http://localhost:3000/authorization-code/callback',
+        callbackURL: 'https://potential-zebra-qwxg6946v29w5w-3000.app.github.dev/authorization-code/callback',
         scope: 'profile offline_access',
       }, (issuer, profile, context, idToken, accessToken, refreshToken, params, done) => {
         console.log(`OIDC response: ${JSON.stringify({
@@ -81,6 +87,7 @@ passport.deserializeUser((obj, next) => {
   next(null, obj);
 });
 
+
 function ensureLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -89,6 +96,15 @@ function ensureLoggedIn(req, res, next) {
   res.redirect('/login')
 }
 
+function demandLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  res.redirect('/')
+}
+
+// app.use('/', ensureLoggedIn, indexRouter);
 app.use('/', indexRouter);
 
 app.use('/login', passport.authenticate('oidc'));
@@ -101,7 +117,8 @@ app.use('/authorization-code/callback',
   }
 );
 
-app.use('/profile', ensureLoggedIn, (req, res) => {
+app.use('/profile', demandLoggedIn, (req, res) => {
+//app.use('/profile', ensureLoggedIn, (req, res) => {
   res.render('profile', { authenticated: req.isAuthenticated(), user: req.user });
 });
 
@@ -114,6 +131,48 @@ app.post('/logout', (req, res, next) => {
     }
     res.redirect(logout_url + '?' + qs.stringify(params));
   });
+});
+
+////Universal Logout endpoint
+app.post('/global-token-revocation', (req, res) => {
+  // 204 When the request is successful
+  const httpStatus = 204;
+
+  // 400 If the request is malformed
+  if (!req.body) {
+    res.status(400);
+  }
+
+  // Find the user by email linked to the org id associated with the API key provided
+  console.log(req.body)
+  
+  const user = req.body['sub_id']['email']
+  console.log(user)
+
+  // 404 User not found
+  if (!user) {
+    res.sendStatus(404);
+  }
+
+  // End user session
+  const storedSession = store.sessions;
+  console.log(storedSession)
+  const sids = [];
+  Object.keys(storedSession).forEach((key) => {
+    const sess = JSON.parse(storedSession[key]);
+    console.log(sess)
+    if (sess.passport.user.username === user) {
+      console.log(sess.passport.user.username)
+      sids.push(key);
+    }
+  });
+  console.log(sids)
+  for (const sid of sids) {
+    store.destroy(sid);
+    console.log('User session deleted')
+  }
+  
+  return res.sendStatus(httpStatus);
 });
 
 // catch 404 and forward to error handler
