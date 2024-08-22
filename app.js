@@ -12,6 +12,7 @@ const axios = require('axios');
 //UL requiremnts
 var {MemoryStore} = require('express-session')
 const store = new MemoryStore();
+var OktaJwtVerifier = require('@okta/jwt-verifier');
 
 // source and import environment variables
 require('dotenv').config({ path: '.okta.env' })
@@ -96,7 +97,7 @@ function ensureLoggedIn(req, res, next) {
   res.redirect('/login')
 }
 
-function demandLoggedIn(req, res, next) {
+function checkLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
@@ -117,7 +118,7 @@ app.use('/authorization-code/callback',
   }
 );
 
-app.use('/profile', demandLoggedIn, (req, res) => {
+app.use('/profile', checkLoggedIn, (req, res) => {
 //app.use('/profile', ensureLoggedIn, (req, res) => {
   res.render('profile', { authenticated: req.isAuthenticated(), user: req.user });
 });
@@ -133,8 +134,40 @@ app.post('/logout', (req, res, next) => {
   });
 });
 
+//// Universal Logout Signed Jwt Validation middleware
+const oktaJwtVerifier = new OktaJwtVerifier({
+  issuer: 'https://test-slo-wic-108.oktapreview.com',
+  jwksUri: 'https://test-slo-wic-108.oktapreview.com/oauth2/v1/keys',
+});
+
+const tokenValidator = async function (req, res, next) {
+  const authHeaders = req.headers.authorization;
+  if (!authHeaders) {
+    return res.sendStatus(401);
+  }
+  const parts = authHeaders.split(' ');
+  const jwt = parts[1];
+  const expectedAud =
+    'https://potential-zebra-qwxg6946v29w5w-3000.app.github.dev/global-token-revocation';
+
+  try {
+    const verifiedJwt = await oktaJwtVerifier.verifyAccessToken(
+      jwt,
+      expectedAud
+    );
+    console.log(verifiedJwt.claims);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(401);
+  }
+  
+  next();
+};
+
+
 ////Universal Logout endpoint
-app.post('/global-token-revocation', (req, res) => {
+//tokenValidator,
+app.post('/global-token-revocation', tokenValidator,(req, res) => {
   // 204 When the request is successful
   const httpStatus = 204;
 
