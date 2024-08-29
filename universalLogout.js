@@ -1,5 +1,6 @@
 const express = require("express");
 const universalLogoutRoute = express.Router();
+var passport = require('passport');
 var store = require('./sessionStore')
 
 universalLogoutRoute.post('/global-token-revocation', async (req, res) => {
