@@ -43,12 +43,11 @@ for (const sid of sids) {
 return res.sendStatus(httpStatus);
 });
 
+universalLogoutRoute.use((err,req,res,next) => {
+  if(err){
 
-// universalLogoutRoute.use((err,req,res,next) => {
-//   if(err){
-
-//     return res.sendStatus(404)
-//   }
-// })
+    return res.sendStatus(404)
+  }
+})
 
 module.exports = universalLogoutRoute;
