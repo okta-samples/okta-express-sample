@@ -1,0 +1,26 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "3 - Allow only authorized access to the endpoint",
+  "steps": [
+    {
+      "file": "app.js",
+      "description": "The cURL request from previous step should result in a 204 response confirming that a user named Trinity exists in the database. Sure, we got a successful response, but what is wrong here? This endpoint isn't secure; we've made it available for anyone to access. Let's fix this by adding authentication to protect this endpoint and establish trust between our server and any external service making a request to this route.\n\nUsing the OAuth 2.0 Authorization method Private key JWT, we'll need to verify that the tokens from Okta are valid. Okta has a library that can handle this for us, so let's install the [Okta JWT Verifier library](https://www.npmjs.com/package/@okta/jwt-verifier).",
+      "line": 142
+    },
+    {
+      "file": "app.js",
+      "description": "Then, instantiate it under your UL section. You'll need to include the issuer, the authorization server from which we expect the signed JWT to originate, and the public keys endpoint so the library can cryptographically match the signed token with the keys published at this endpoint. Using Okta as the IdP, you can find the issuer and keys endpoint information at the Okta Org Authorization Server's metadata endpoint - https://developer.okta.com/docs/concepts/auth-servers/#org-authorization-server-discovery-endpoints.",
+      "line": 144
+    },
+    {
+      "file": "app.js",
+      "description": "Next, we'll need to create a custom middleware called, tokenValidator, to get the signed JWT from the POST request body and validate it with the Okta JWT Verifier. The signed JWT method takes in two parameters: the JWT and expectedAud, which is your UL endpoint. ",
+      "line": 149
+    },
+    {
+      "file": "app.js",
+      "description": "Don't forget to pass the tokenValidator middleware to the global token revocation endpoint.",
+      "line": 153
+    }
+  ]
+}

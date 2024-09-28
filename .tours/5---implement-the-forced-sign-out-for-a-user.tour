@@ -1,0 +1,16 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "5 - Redirect the user back to login",
+  "steps": [
+    {
+      "file": "app.js",
+      "description": "Although the user no longer has an active session as confirmed by the backend with a 401 error, we'll need to make sure this info is relayed to the front end and the user is redirected to the main login page to reauthenticate.\n\nUnder the apps.js file. Find the function `ensureLoggedIn` which logs a user in when they are authenticated modify this function so that it forces a user back to the main login page if they are not authenticated.\n\n\n ```js \n function ensureLoggedIn(req, res, next) {\n if (req.isAuthenticated()) {\n   return next();\n }\n\n res.redirect('/login')\n}\n```\n\nThe modify the function to the following:\n\n```js \nfunction checkLoggedIn(req, res, next) {\n if (req.isAuthenticated()) {\n   return next();\n }\n\n res.redirect('/')\n}\n```",
+      "line": 86
+    },
+    {
+      "file": "app.js",
+      "description": "Additionally, remove the function `ensureLoggedIn` from this line and add `checkLoggedIn` instead. We don't want to log the user in automatically, instead we want them to visit the main page to login again via their IdP.\n\nTest your UL functionality one more time!",
+      "line": 106
+    }
+  ]
+}

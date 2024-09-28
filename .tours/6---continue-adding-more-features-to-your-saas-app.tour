@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "6 - Continue adding more features to your SaaS app!",
+  "steps": [
+    {
+      "title": "Continue the enterprise-ready journey!",
+      "description": "This tutorial provides the fundamental steps to creating a UL endpoint to end a user's session or tokens. Find the completed project universal-logout.\n\nNow that you have an OIDC app with a UL endpoint, you can continue your Enterprise-Ready journey by adding user lifecycle management through System for Cross-domain Identity Management (SCIM) to your Todo app.\n\n- Enterprise-Ready Workshop: Manage users with SCIM\\\nhttps://developer.okta.com/blog/2023/07/28/scim-workshop\n\n- Enterprise-Ready Workshop: Authenticate with OpenID Connect\\\nhttps://developer.okta.com/blog/2023/07/28/oidc_workshop\n\nYou can further manage your users and groups using Terraform or Workflows:\n- Enterprise Maturity Workshop: Terraform\\\nhttps://developer.okta.com/blog/2023/07/28/terraform-workshop\n\n- Enterprise Ready Workshop: Automate with no-code Okta Workflows\\\nhttps://developer.okta.com/blog/2023/09/15/workflows-workshop"
+    }
+  ]
+}

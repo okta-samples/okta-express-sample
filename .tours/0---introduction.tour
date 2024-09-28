@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "0 - Dev Lab: Universal Logout ",
+  "steps": [
+    {
+      "title": "Introduction",
+      "description": "Your enterprise customers expect you to safeguard them from common security incidents, especially when it comes to compromised user accounts. Perhaps a user has signed in from a known stolen device or another country outside the list of allowed IP zones. If a hacker is masquerading as one of your customer's employees, potentially accessing sensitive company data, you must end their session and log them out of your app immediately. \n\nBottom line: If you build SaaS applications for enterprise-level customers who leverage Identity Providers (IdPs), workflows, and threat-detection tools, adding Universal Logout to your app is the solution to ending suspicious user sessions as soon as possible. \n\nIn this tutorial, you will learn to add a secure Universal Logout API endpoint to a web app, we'll use Okta as the IdP to initiate user logout and their active session. And finally, handle redirecting them back to an unauthenticated page."
+    }
+  ]
+}

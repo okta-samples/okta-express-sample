@@ -1,0 +1,18 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "4 - Test with Okta",
+  "steps": [
+    {
+      "title": "Test the endpoint",
+      "description": "Now that the app has a secure, working UL endpoint. In this section, we'll test the endpoint with Okta.\n\nIn your Codespaces VM, on the PORTS tab set the port visibility to public. This allows requests from Okta to be forwarded to the public address provided by GitHub Codespaces."
+    },
+    {
+      "title": "Provide revocation endpoint info to the Okta",
+      "description": "Log in to your Okta dashboard, and under your UL App, go to the General tab. Within the General tab, look for the Logout > Global token revocation endpoint section enable the Okta system or admin initiates logout option and add your Logout endpoint URL with your proxy URL, for example, \"https://easy-states-create.loca.lt/global-token-revocation\", with Subject format set to Email Identifier, and Auth method set to \"Private key JWT.\" Meaning Okta will send a request identifying the user with the email used to SSO into the Todo app. It will authenticate to the endpoint with the secure OAuth method Private key JWT.\n\nIn addition, we'll need to update the expectedAud to match the base URL provided by the Localtunnel service, so be sure to substitute that base URL with your own in the apps.js file."
+    },
+    {
+      "title": "End a user's session through Okta",
+      "description": "From the Admin Console, go to Directory > People, and find the user you want whose session you want to delete. For example, let's end the user session for trinity@whiterabbit.fake.\" To do this, click on their profile, click  More Actions, and then Clear User Sessions. Check the option Also include logout enabled apps and Okta API tokens before clicking Clear and revoke. You'll receive a Sessions cleared and tokens revoked response.\n\nNow, navigate to the Todo app and add a new task. Confirm that the user can't add a new task. If so, you have successfully implemented Universal Logout with Okta!"
+    }
+  ]
+}

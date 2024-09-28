@@ -1,0 +1,26 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "2 - Build a Universal Logout endpoint to find a user and their active sessions",
+  "steps": [
+    {
+      "file": "app.js",
+      "description": "Add code here to find a user based on information received from the request body.\n\nAs per the Global Token Revocation Specification, we are expecting an external request to end a user's session based on the email used to sign in with to their IdP. The request will look like the following:\n\n\nPOST /global-token-revocation\\\nHost: example.com\\\nContent-Type: application/json\\\nAuthorization: Bearer f5641763544a7b24b08e4f74045\\\n\\\n{\\\n  \"sub_id\": {\\\n    \"format\": \"email\",\\\n    \"email\": \"user@example.com\"\\\n  }\\\n}\\\n\nOpen a new terminal window and send the following cURL request to check your code. \n\n```\ncurl --request POST \\\n  --url http://localhost:3333/global-token-revocation \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n  \"sub_id\": {\n    \"format\": \"email\",\n    \"email\": \"trinity@whiterabbit.fake\"\n  }\n}'\n```\n\nThis request will result in a 204 response confirming that a user named Trinity exists in our database. Sure, we got a successful response, but what is wrong here? This endpoint isn't secure; we've made it available for anyone to access. Let's fix this by adding authentication to protect this endpoint and establish trust between our server and any external service making a request to this route.",
+      "line": 168
+    },
+    {
+      "file": "app.js",
+      "description": "Now that we have the user object, we can associate the user's user ID with the session object.\n\n\n",
+      "line": 168
+    },
+    {
+      "file": "app.js",
+      "description": "Loop through the list of `sids` and delete all active sessions associated with the user.",
+      "line": 180
+    },
+    {
+      "file": "app.js",
+      "description": "In Express, we’ll need to access a user’s session in the session store from the express-session library. We specifically need the MemoryStore object, which has already been imported in this file.\n\n```js\nvar {MemoryStore} = require('express-session')\\\nconst store = new MemoryStore();```",
+      "line": 168
+    }
+  ]
+}

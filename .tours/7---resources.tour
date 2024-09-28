@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "7 - Resources",
+  "steps": [
+    {
+      "title": "Continue the enterprise-ready journey!",
+      "description": "- Oktadev Blog: How to Instantly Sign a User Out across All Your Apps-\\\nhttps://developer.okta.com/blog/2024/04/30/express-universal-logout\n\n- Okta docs: Build Universal Logout for your App-\\\nhttps://developer.okta.com/docs/guides/oin-universal-logout-overview\n\n- Global Token Revocation spec-\\\nhttps://datatracker.ietf.org/doc/html/draft-parecki-oauth-global-token-revocation"
+    }
+  ]
+}

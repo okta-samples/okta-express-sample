@@ -8,6 +8,8 @@ var passport = require('passport');
 var qs = require('querystring');
 var { Strategy } = require('passport-openidconnect');
 const axios = require('axios');
+const universalLogoutRoute = require('./universalLogout.js');
+import OktaJwtVerifier from '@okta/jwt-verifier';
 
 // source and import environment variables
 require('dotenv').config({ path: '.okta.env' })
@@ -132,5 +134,52 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+///////////////////////////////////////////////////////
+// Universal Logout Route
+
+// Signed Jwt Validation
+
+const oktaJwtVerifier = new OktaJwtVerifier({
+  issuer: 'https://{yourOktaDomain}.com',
+  jwksUri: 'https://{yourOktaDomain}.com/oauth2/v1/keys',
+});
+
+// Code your custom middleware for signed JWT validation
+
+app.use(morgan('combined'));
+
+app.post('/global-token-revocation', (req, res) => {
+  const httpStatus = 204;
+
+  // 400 If the request is malformed
+  if (!req.body) {
+    res.status(400);
+  }
+
+  // Find the user by email 
+
+  // 404 User not found
+  if (!user) {
+    res.sendStatus(404);
+  }
+
+  // Get all the user's session through MemoryStore
+  const storedSession = store.sessions;
+  const userId = user.id;
+  const sids = [];
+  Object.keys(storedSession).forEach((key) => {
+    const sess = JSON.parse(storedSession[key]);
+    if (sess.passport.user === userId) {
+      sids.push(key);
+    }
+  });
+
+
+  // End user session(s)
+  return res.sendStatus(httpStatus);
+});
+
 
 module.exports = app;

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "1 - Get the sample app up and running",
+  "steps": [
+    {
+      "title": "Prerequisites",
+      "description": "okta-express-universal-logout-lab - ul-lab-start\n\n8 or g\nWe will build the Universal Logout (UL) endpoint on [an express sample app](https://github.com/oktadev/okta-express-universal-logout-lab) with OIDC support implemented. Go to the ul-lab-start branch and open codespaces.\nTroubleshooting tips: Before you begin, ensure you can run the sample application. We will add some code and test it along the way. \n\nInstall the necessary dependencies with the following command:\n\nnpm install\n\nRun the application with the following command.\n\nnpm start"
+    },
+    {
+      "title": "Sign up with Okta",
+      "description": "If you don't already have an Okta account, you can sign up for one here under Workforce Identity Cloud – Developer Edition. \nYou'll also need to create an OIDC application, which you can do by following the instructions listed here under Setup your app. Set the Sign-in redirect URI as https://${CODESPACENAME}-3000.app.github.dev/authorization-code/callback. Save your client_id and client_secret; you'll need it in the next steps."
+    },
+    {
+      "file": ".okta.env",
+      "description": "Add your OIDC integration details to the app\nUnder the .okta.env file, add the following with your Okta Org details and the OIDC app. \n\nORG_URL=${CLI_OKTA_ORG_URL}\nCLIENT_ID=${CLI_OKTA_CLIENT_ID}\nCLIENT_SECRET=${CLI_OKTA_CLIENT_SECRET}",
+      "line": 1
+    },
+    {
+      "title": "Create a test user",
+      "description": "To test whether UL works for our app, we'll create a new user on Okta whose account we will forcibly sign out. \nOpen the Admin Console for your org, and go to Directory > People. \n\nClick Add Person and create a person with the following properties:\nUser type: User\nFirst name: Trinity\nLast name: Anderson\nUsername: trinity@whiterabbit.fake\nActivation: Activate now\nEnable the option I will set password > Enter a password of your choice, and click Save.\n\nRefresh the page and click on Trinity Anderson's profile. Click the Assign Application button and assign Trinity to the UL OIDC App. \nLastly, test that the user can log in with the Okta."
+    }
+  ],
+  "description": "Prerequisites - okta-express-universal-logout-lab - ul-lab-start 8 or g We will build the Universal Logout (UL) endpoint on [an express sample app](https://github.com/oktadev/okta-express-universal-logout-lab) with OIDC support implemented. Go to the ul-lab-start branch and open codespaces. Troubleshooting tips: Before you begin, ensure you can run the sample application. We will add some code and test it along the way.   Install the necessary dependencies with the following command:  npm install  Run the application with the following command.   npm start"
+}
