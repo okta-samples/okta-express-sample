@@ -21,11 +21,7 @@ Before running this sample, you will need the following:
 
 Grab and configure this project using `okta start express`.
 
-Follow the instructions printed to the console. See the next section to enable Refresh Tokens.
-
-## Enable Refresh Token
-
-Manually enable Refresh Token on your Okta application to avoid third-party cookies. Sign in to your Okta Developer Edition account. Press the **Admin Console** button to navigate to the Okta Admin Console. In the sidenav, navigate to **Applications** > **Applications** and find the Okta application for this project named `okta-express-sample`. Edit the application's **General Setting** to enable the **Refresh Token** checkbox. **Save** your changes.
+Follow the instructions printed to the console.
 
 ## Run the Example
 

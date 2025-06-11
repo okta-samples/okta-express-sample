@@ -1,23 +1,27 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var passport = require('passport');
-var qs = require('querystring');
-var { Strategy } = require('passport-openidconnect');
-const axios = require('axios');
+import express from 'express';
+import createError from 'http-errors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import session from 'express-session';
+import passport from 'passport';
+import qs from 'querystring';
+import { Strategy } from 'passport-openidconnect';
+import axios from 'axios';
 
 // source and import environment variables
-require('dotenv').config({ path: '.okta.env' })
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '.okta.env' })
 const { ORG_URL, CLIENT_ID, CLIENT_SECRET } = process.env;
 
-var indexRouter = require('./routes/index');
-
-var app = express();
+import homeRoute from './routes/index.js';
+const app = express();
 
 // view engine setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -38,7 +42,8 @@ app.use(passport.session());
 
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfigurationRequest
 let logout_url, id_token;
-let _base = ORG_URL.slice(-1) == '/' ? ORG_URL.slice(0, -1) : ORG_URL;
+const _base = ORG_URL.slice(-1) == '/' ? ORG_URL.slice(0, -1) : ORG_URL;
+
 axios
   .get(`${_base}/.well-known/openid-configuration`)
   .then(res => {
@@ -55,18 +60,18 @@ axios
         clientID: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         callbackURL: 'http://localhost:3000/authorization-code/callback',
-        scope: 'profile offline_access',
-      }, (issuer, profile, context, idToken, accessToken, refreshToken, params, done) => {
+        scope: 'openid profile',
+      }, (issuer, profile, context, idToken, accessToken, params, done) => {
         console.log(`OIDC response: ${JSON.stringify({
           issuer, profile, context, idToken,
-          accessToken, refreshToken, params
+          accessToken, params
         }, null, 2)}\n*****`);
         id_token = idToken;
         return done(null, profile);
       }));
     }
     else {
-      console.log(`Unable to reach the well-known endpoint. Are you sure that the ORG_URL you provided (${ORG_URL}) is correct?`);
+      console.error(`Unable to reach the well-known endpoint. Are you sure that the ORG_URL you provided (${ORG_URL}) is correct?`);
     }
   })
   .catch(error => {
@@ -89,7 +94,7 @@ function ensureLoggedIn(req, res, next) {
   res.redirect('/login')
 }
 
-app.use('/', indexRouter);
+app.use('/', homeRoute);
 
 app.use('/login', passport.authenticate('oidc'));
 
@@ -133,4 +138,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+export default app;
