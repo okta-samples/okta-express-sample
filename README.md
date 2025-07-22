@@ -25,17 +25,16 @@ Before you begin, you’ll need an Okta Integrator Free Plan account. To get one
 7. In the **Controlled access** section, select the appropriate access level
 8. Click **Save**
 
-### Where are my new app's credentials?
-
 Creating an OIDC Web App manually in the Admin Console configures your Okta Org with the application settings.
 
-After creating the app, you can find the configuration details on the app’s **General** tab:
+## Get the Code
 
-- **Client ID:** Found in the **Client Credentials** section
-- **Client Secret:** Click **Show** in the **Client Credentials** section to reveal
-- **Issuer:** Found in the **Issuer URI** field for the authorization server that appears by selecting **Security > API** from the navigation pane.
+```bash
+git clone https://github.com/okta-samples/okta-express-sample.git
+cd okta-express-sample
+```
 
-You’ll need these values for your application configuration:
+Update your `.okta.env` file with the values from your application's configuration:
 
 ```text
 ORG_URL="https://dev-133337.okta.com"
@@ -43,11 +42,12 @@ CLIENT_ID="0oab8eb55Kb9jdMIr5d6"
 CLIENT_SECRET="NEVER-SHOW-SECRETS"
 ```
 
-## Get the Code
+### Where are my new app's credentials?
 
-Grab and configure this project using `okta start express`.
-
-Follow the instructions printed to the console.
+After creating the app, you can find the configuration details on the app’s **General** tab:
+- **Client ID:** Found in the **Client Credentials** section
+- **Client Secret:** Click **Show** in the **Client Credentials** section to reveal
+- **Issuer:** Found in the **Issuer URI** field for the authorization server that appears by selecting **Security > API** from the navigation pane.
 
 ## Run the Example
 
